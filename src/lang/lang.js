@@ -314,6 +314,10 @@ export default {
     en: "Bugs feedback",
     zh: "错误反馈",
   },
+  Share_to_Earn: {
+    en: "Share_to_Earn",
+    zh: "分享赚取",
+  },
   Connect_Wallet: {
     en: "Connect Wallet",
     zh: "连接钱包",

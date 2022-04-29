@@ -19,3 +19,14 @@ Cards: ${cards}
 Chosen: ${godIndex}
 `;
 };
+
+export const withdrawMessage = (address, nonce, timestamp, extractNum) => {
+  return `
+trojan-box wants you to sign in with your Ethereum account:
+${address}
+for withdraw bonus apply
+Nonce: ${nonce}
+Timestamp: ${timestamp}
+Bonus: ${extractNum}
+`;
+};

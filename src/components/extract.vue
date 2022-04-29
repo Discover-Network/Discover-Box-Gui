@@ -50,63 +50,72 @@
       </div>
     </a-modal>
 
-    <a-modal
-      title=""
-      :visible="shareCardShow"
-      :footer="null"
-      :closable="false"
-      :maskClosable="true"
-      :width="570"
-      @cancel="shareCardCancel"
-      v-if="shareCardShow"
-    >
-      <div class="share-card">
-        <div
-          class="share-card-cancel"
-          @click="shareCardCancel"
-          v-on:click="mouseClick"
-        >
-          <i class="fa fa-times" aria-hidden="true"></i>
-        </div>
-        <div class="share-card-title">
-          {{ lg("congratulations") }}
-        </div>
-        <div style="margin-bottom: 40px">
-          <div>{{ lg("you_have_earned") }}</div>
-          <div class="aresNum">
-            <img src="@/assets/image/bag.png" alt="" width="50" />
-            {{ extractNum }} ARES
+    <div class="share-wrapper" ref="shareWrapper">
+      <a-modal
+        title=""
+        :get-container="() => $refs.shareWrapper"
+        :visible="shareCardShow"
+        :footer="null"
+        :closable="false"
+        :maskClosable="true"
+        :width="750"
+        @cancel="shareCardCancel"
+        v-if="shareCardShow"
+      >
+        <div class="share-card">
+          <div
+            class="share-card-cancel"
+            @click="shareCardCancel"
+            v-on:click="mouseClick"
+          >
+            <i class="fa fa-times" aria-hidden="true"></i>
+          </div>
+          <div>
+            <div class="share-card-title">{{ lg("congratulations") }}</div>
+            <div>{{ lg("you_have_earned") }}</div>
+          </div>
+          <div>
+            <div class="ares-num">
+              <img src="@/assets/image/bag.png" alt="" width="50" />
+              {{ extractNum }} DISC
+            </div>
+          </div>
+          <div class="share-card-tips">{{ lg("you_have_earned_tips") }}</div>
+          <div class="share-button">
+            <div class="share-card-btn" @click="shareTwitter">
+              <TwitterOutlined
+                type="twitter"
+                style="color: #242d4d; font-size: 20px"
+              />
+              Twitter
+            </div>
+          </div>
+
+          <div class="submit-wrapper">
+            <div class="link-wrapper">
+              <div>Link</div>
+              <a-input placeholder="Your link here" v-model="shareLink" />
+            </div>
+            <div class="submit-btn" @click="submitLink">Submit</div>
+          </div>
+
+          <div class="submit-tip">
+            <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+            Please confirm whether your sharing link is submitted before
+            clicking ok. If you don't submit it, it will be regarded as giving
+            up sharing!
+          </div>
+
+          <div class="share-btn" @click="confirmShare" v-on:click="mouseClick">
+            {{ lg("ok") }}
+            <div class="share-tips">
+              <span class="arrow"></span>
+              <span>{{ lg("withdrawal_to_the_account") }}</span>
+            </div>
           </div>
         </div>
-        <!--<div class="shareCardTips">{{lg("you_have_earned_tips")}}</div>-->
-        <!--<div class="shareButton">-->
-        <!--  <div class="shareCardBtn" @click="shareTwitter"><a-icon type="twitter" style="color: #FFF; font-size:20px"/>-->
-        <!--    Twitter-->
-        <!--  </div>-->
-        <!--</div>-->
-
-        <!--<div class="submitWrapper">-->
-        <!--  <div class="linkWrapper">-->
-        <!--    <div>Link</div>-->
-        <!--    <a-input placeholder="Your link here" v-model="shareLink"/>-->
-        <!--  </div>-->
-        <!--  <div class="submitBtn" @click="submitLink">Submit</div>-->
-        <!--</div>-->
-
-        <!--<div class="submitTip">-->
-        <!--  <i class="fa fa-exclamation-circle" aria-hidden="true"></i>-->
-        <!--  Please confirm whether your sharing link is submitted before clicking ok. If you don't submit it, it will be regarded as giving up sharing!-->
-        <!--</div>-->
-
-        <div class="shareBtn" @click="confirmShare" v-on:click="mouseClick">
-          {{ lg("ok") }}
-          <div class="shareTips">
-            <span class="arrow"></span>
-            <span>{{ lg("withdrawal_to_the_account") }}</span>
-          </div>
-        </div>
-      </div>
-    </a-modal>
+      </a-modal>
+    </div>
 
     <a-modal
       title=""
@@ -117,12 +126,12 @@
       :width="750"
       :centered="true"
     >
-      <div class="rewardsLessWrapper">
-        <div class="rewardsLessContent">
+      <div class="rewards-Less-wrapper">
+        <div class="rewards-less-content">
           {{ lg("extract_less_tip") }} {{ configStore.minWithdraw }} ARES.
         </div>
         <div
-          class="extractMaxBtn extractFooterBtn lessBtn"
+          class="lessBtn"
           @click="rewardsLess = false"
           v-on:click="mouseClick"
         >
@@ -136,6 +145,7 @@
 <script>
 import { MediaChannel, ShareType } from "@/utils/contant";
 import { appConfigStore } from "@/store/config";
+import { withdrawMessage } from "@/utils/sign_message";
 export default {
   name: "BoxExtract",
   props: {
@@ -152,19 +162,21 @@ export default {
       type: String,
     },
   },
+  setup() {
+    const configStore = appConfigStore();
+    return {
+      configStore,
+    };
+  },
   data() {
     return {
       shareCardShow: false,
       extractNum: 0,
-      rewardsLess: false,
+      rewardsLess: true,
       shareLink: "",
       extractAddress: "",
-      configStore: null,
       gameBalance: this.maxGameBalance,
     };
-  },
-  created() {
-    this.configStore = appConfigStore();
   },
   mounted() {
     this.getDefaultAddress();
@@ -199,15 +211,12 @@ export default {
           mode: "cors",
         }).then(async (res) => {
           const nonceRes = await res.json();
-          const WithdrawBonusApplySignMsg = `
-trojan-box wants you to sign in with your Ethereum account:
-${address}
-for withdraw bonus apply
-Nonce: ${nonceRes.data}
-Timestamp: ${timestamp}
-Bonus: ${this.extractNum}
-`;
-          // const msg = v.myWeb3.utils.keccak256(WithdrawBonusApplySignMsg);
+          const WithdrawBonusApplySignMsg = withdrawMessage(
+            address,
+            nonceRes.data,
+            timestamp,
+            this.extractNum
+          );
           v.myWeb3.eth.personal
             .sign(WithdrawBonusApplySignMsg, address, "")
             .then((sign) => {
@@ -302,7 +311,6 @@ Bonus: ${this.extractNum}
 
 .extract-title {
   font-size: 40px;
-  font-weight: bold;
   text-align: center;
 }
 
@@ -386,13 +394,22 @@ Bonus: ${this.extractNum}
   width: 200px;
 }
 
+.share-wrapper {
+  /deep/ .ant-modal-mask {
+    background-color: #242d4d;
+    opacity: 0.85;
+  }
+
+  /deep/ .ant-modal-content {
+    padding: inherit;
+  }
+}
+
 .share-card {
-  background: #607ff6;
   border-radius: 33px;
   text-align: center;
   color: #fff;
   position: relative;
-  font-family: "Moriis roman", serif;
 }
 
 .share-card-cancel {
@@ -403,40 +420,40 @@ Bonus: ${this.extractNum}
 }
 
 .share-card-title {
-  font-size: 35px;
-  font-weight: bold;
+  font-size: 30px;
+  font-weight: 400;
   text-align: center;
-  margin-bottom: 30px;
 }
 
-.aresNum {
+.ares-num {
   width: 303px;
   height: 62px;
   line-height: 62px;
-  background: #2a4bcc;
+  background: #284265;
   border-radius: 31px;
   font-weight: bold;
   font-size: 30px;
   text-align: center;
   margin: 0 auto;
+  margin-top: 20px;
 }
 
-.shareCardTips {
-  padding: 30px 0;
-  font-family: Poppins, serif;
-  font-size: 16px;
+.share-card-tips {
+  padding: 10px 0;
+  font-family: Poppins;
+  font-size: 14px;
 }
 
-.shareButton {
+.share-button {
   display: flex;
   justify-content: space-around;
 }
 
-.shareCardBtn {
+.share-card-btn {
   width: 168px;
   height: 49px;
   line-height: 49px;
-  background: #0025ac;
+  background: #1de4ae;
   border-radius: 31px;
   font-size: 20px;
   display: flex;
@@ -444,51 +461,53 @@ Bonus: ${this.extractNum}
   justify-content: center;
   column-gap: 10px;
   cursor: pointer;
+  color: #242d4d;
 }
 
-.shareBtn {
+.share-btn {
   width: 144px;
   height: 53px;
   line-height: 53px;
   font-size: 25px;
   text-align: center;
-  background: #0025ac;
-  box-shadow: 1px 5px 0 #001e8a;
+  background: #1de4ae;
+  box-shadow: 1px 5px 0 #004867;
   border-radius: 15px;
   margin: 0 auto;
   margin-top: 20px;
   cursor: pointer;
   position: relative;
-  &:hover .shareTips {
+  &:hover .share-tips {
     display: block;
   }
 }
 
-.linkWrapper {
+.link-wrapper {
   text-align: left;
   width: 70%;
   .ant-input {
-    border: 2px solid rgba(10, 19, 63, 0.49);
-    background: #4b64c9;
-    color: #fff;
+    border: 2px solid #1de4ae;
+    background: #fff;
+    color: #242d4d;
     height: 48px;
     line-height: 48px;
     font-size: 18px;
   }
 }
 
-.submitWrapper {
+.submit-wrapper {
   display: flex;
   justify-content: center;
+  align-items: center;
   column-gap: 10px;
 }
 
-.submitBtn {
+.submit-btn {
   width: 110px;
   height: 45px;
   line-height: 45px;
-  background: #0025ac;
-  box-shadow: 1px 5px 0 #001e8a;
+  background: #1de4ae;
+  box-shadow: 1px 5px 0 #004867;
   border-radius: 15px;
   font-size: 24px;
   font-weight: bold;
@@ -498,28 +517,28 @@ Bonus: ${this.extractNum}
   margin-top: 18px;
 }
 
-.submitTip {
+.submit-tip {
   font-size: 14px;
   font-family: Poppins, serif;
   font-weight: 300;
   line-height: 18px;
-  color: #0025ac;
+  color: #fff;
   text-align: left;
   margin-top: 5px;
-  padding: 0 20px;
+  padding: 0 60px;
 }
 
-.shareTips {
+.share-tips {
   display: none;
   position: absolute;
-  bottom: -82px;
+  bottom: -77px;
   width: 600px;
   right: -250px;
-  color: #607ff6;
+  color: #fff;
   font-family: Poppins, serif;
   font-size: 16px;
-  background: #0a133f;
-  border: 2px solid #607ff6;
+  background: #242d4d;
+  border: 2px solid #1de4ae;
   border-radius: 15px;
 }
 
@@ -528,21 +547,53 @@ Bonus: ${this.extractNum}
   height: 0;
   border-style: solid;
   border-width: 15px;
-  border-color: transparent transparent #0a133f transparent;
+  border-color: transparent transparent #1de4ae transparent;
   position: absolute;
-  left: 42%;
-  top: -29px;
+  left: 44%;
+  top: -30px;
 }
 
-.rewardsLessWrapper {
-  font-family: "Moriis roman", serif;
+.rewards-Less-wrapper {
   text-align: center;
-  font-size: 25px;
+  font-size: 22px;
   color: #fff;
 }
 
 .lessBtn {
   width: 100px;
   margin: 10px auto;
+  height: 47px;
+  line-height: 47px;
+  color: #242d4d;
+  background: #1de4ae;
+  box-shadow: 1px 5px 0px #004867;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 25px;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+
+.lessBtn:before {
+  content: "";
+  background-color: rgba(255, 255, 255, 0.5);
+  height: 100%;
+  width: 3em;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: -100px;
+  transform: skewX(-45deg) translateX(0);
+  transition: none;
+}
+
+.lessBtn:hover {
+  color: #fff;
+}
+
+.lessBtn:hover:before {
+  transform: skewX(-45deg) translateX(13.5em);
+  transition: all 0.5s ease-in-out;
 }
 </style>

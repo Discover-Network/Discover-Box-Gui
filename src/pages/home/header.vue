@@ -3,7 +3,7 @@
     <div class="header-nav">
       <div class="share-btn mouse-click" @click="showShare">
         <img src="@/assets/images/coin.png" alt="" />
-        {{ lg("Bugs_feedback") }}
+        {{ lg("Share_to_Earn") }}
       </div>
       <div class="connect-wallet">
         {{
@@ -127,12 +127,18 @@
       :maxGameBalance="gameAccountBalance"
       :totalWinAres="totalWinAres"
     ></BoxExtract>
+
+    <ShareEarn
+      v-model:showShareEarn="showShareEarn"
+      v-if="showShareEarn"
+    ></ShareEarn>
   </div>
 </template>
 
 <script>
 import { hideMiddleStr } from "@/utils/format";
 import BoxExtract from "@/components/extract";
+import ShareEarn from "@/pages/home/share_earn.vue";
 import apis from "@/utils/apis.js";
 import { methodType, request } from "@/utils/request";
 import data_main_list from "@/data/main_list";
@@ -146,6 +152,7 @@ export default {
   name: "BoxHeader",
   components: {
     BoxExtract,
+    ShareEarn,
   },
   data() {
     return {
@@ -158,7 +165,8 @@ export default {
       winTotalNum: 0,
       gamePermissions: false,
       modalShow: false,
-      extractShow: false,
+      extractShow: true,
+      showShareEarn: false,
       nickName: "haha",
     };
   },
@@ -240,7 +248,9 @@ export default {
         this.totalWinAres = result.data.total_win;
       });
     },
-    showShare() {},
+    showShare() {
+      this.showShareEarn = true;
+    },
     async toWin() {
       this.playBtnSound();
       if (!this.gamePermissions) {

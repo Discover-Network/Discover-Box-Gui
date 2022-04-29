@@ -1,7 +1,14 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import { BellFilled, CloseOutlined, MenuOutlined } from "@ant-design/icons-vue";
-import { Badge, Table, Modal, Input } from "ant-design-vue";
+import {
+  BellFilled,
+  CloseOutlined,
+  MenuOutlined,
+  FileImageOutlined,
+  UploadOutlined,
+  TwitterOutlined,
+} from "@ant-design/icons-vue";
+import { Badge, Table, Modal, Input, Upload, Spin } from "ant-design-vue";
 import { ElCarousel, ElCarouselItem } from "element-plus";
 import "element-plus/dist/index.css";
 
@@ -36,7 +43,10 @@ window.web_lang = web_lang;
   app.component("BellFilled", BellFilled);
   app.component("CloseOutlined", CloseOutlined);
   app.component("MenuOutlined", MenuOutlined);
-  app.use(Badge).use(Table).use(Modal).use(Input);
+  app.component("FileImageOutlined", FileImageOutlined);
+  app.component("UploadOutlined", UploadOutlined);
+  app.component("TwitterOutlined", TwitterOutlined);
+  app.use(Badge).use(Table).use(Modal).use(Input).use(Upload).use(Spin);
   app.use(ElCarousel).use(ElCarouselItem);
   app.use(router);
   app.mount("#app");
