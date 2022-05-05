@@ -394,4 +394,25 @@ export default {
   transform: skewX(-45deg) translateX(17em);
   transition: all 0.5s ease-in-out;
 }
+
+@media screen and (max-width: 750px) {
+  .leaderboard {
+    padding: 0 20px 20px 20px;
+  }
+
+  .board-switch-btn {
+    width: 320px;
+  }
+
+  .board-cards {
+    flex-direction: column;
+    align-items: center;
+    row-gap: 20px;
+    padding-bottom: 30px;
+  }
+
+  .about-table {
+    max-width: 100%;
+  }
+}
 </style>

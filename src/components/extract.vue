@@ -172,7 +172,7 @@ export default {
     return {
       shareCardShow: false,
       extractNum: 0,
-      rewardsLess: true,
+      rewardsLess: false,
       shareLink: "",
       extractAddress: "",
       gameBalance: this.maxGameBalance,

@@ -110,7 +110,10 @@
               >
                 <img src="@/assets/images/bag.png" alt="coin" width="35" />
               </div>
-              <div class="winner-award mouseClick" @click="getWinHistory(0)">
+              <div
+                class="winner-award mouseClick"
+                @click="showWinHistory = true"
+              >
                 <img src="@/assets/images/Book.png" alt="trojan" width="28" />
               </div>
               <div class="winner-medium mouseClick" @click="toMedium">
@@ -1851,7 +1854,7 @@ export default {
   height: 51px;
   line-height: 51px;
   border: 2px solid #1de4ae;
-  box-shadow: 1px 5px 0 #000b53;
+  box-shadow: 1px 5px 0 #004867;
   border-radius: 8px;
   text-align: center;
   font-size: 26px;
@@ -1869,7 +1872,7 @@ export default {
   height: 56px;
   background: #242d4d;
   border: 2px solid #1de4ae;
-  box-shadow: 4px 4px 0px #000b53;
+  box-shadow: 4px 4px 0px #004867;
   border-radius: 12px;
 }
 
@@ -1928,7 +1931,7 @@ export default {
   text-shadow: 0 3px 0 rgba(14, 23, 79, 0.2);
   background: #242d4d;
   border: 2px solid #1de4ae;
-  box-shadow: 4px 4px 0 #000b53;
+  box-shadow: 4px 4px 0 #004867;
   border-radius: 12px;
   padding: 2px 10px;
   cursor: pointer;
@@ -1944,7 +1947,7 @@ export default {
   width: 54px;
   background: #242d4d;
   border: 2px solid #1de4ae;
-  box-shadow: 4px 4px 0 #000b53;
+  box-shadow: 4px 4px 0 #004867;
   opacity: 1;
   border-radius: 12px;
   text-align: center;
@@ -2371,7 +2374,7 @@ export default {
   height: 47px;
   line-height: 47px;
   background: #0025ac;
-  box-shadow: 1px 5px 0 #001e8a;
+  box-shadow: 1px 5px 0 #004867;
   border-radius: 15px;
   text-align: center;
   margin-left: 10px;
@@ -2440,7 +2443,7 @@ export default {
     width: 30px;
   }
 
-  .prizePot {
+  .prize-pot {
     font-size: 12px;
     height: 49px;
     width: 137px;
@@ -2458,8 +2461,8 @@ export default {
   }
 
   .back-btn {
-    height: 31px;
-    width: 35px;
+    height: 40px;
+    width: 48px;
     line-height: 40px;
   }
 
@@ -2531,13 +2534,13 @@ export default {
   .menu-icon {
     width: 54px;
     height: 49px;
-    background: #607ff6;
-    border: 2px solid #0025ac;
-    box-shadow: 4px 4px 0 #000b53;
+    background: #284265;
+    border: 2px solid #1de4ae;
+    box-shadow: 4px 4px 0 #004867;
     opacity: 1;
     border-radius: 12px;
     text-align: center;
-    line-height: 47px;
+    line-height: 58px;
   }
 
   .winner-profile-wrapper {

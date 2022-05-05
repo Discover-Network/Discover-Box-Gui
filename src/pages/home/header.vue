@@ -165,7 +165,7 @@ export default {
       winTotalNum: 0,
       gamePermissions: false,
       modalShow: false,
-      extractShow: true,
+      extractShow: false,
       showShareEarn: false,
       nickName: "haha",
     };
@@ -817,5 +817,44 @@ export default {
   background: #1de4ae;
   box-shadow: 1px 5px 0px #004867;
   border-radius: 5px;
+}
+
+@media screen and (max-width: 750px) {
+  .header {
+    height: 732px;
+    padding: 50px 20px 0 20px;
+  }
+  .header-nav {
+    .share-btn {
+      overflow: hidden;
+      padding: 0 5px;
+      font-size: 14px;
+      width: 170px;
+    }
+  }
+  .account-wrapper {
+    left: -110px;
+  }
+
+  .account {
+    width: 100%;
+  }
+
+  .box-logo {
+    height: 200px;
+    img {
+      width: 70%;
+      height: initial;
+      margin-top: 20px;
+    }
+  }
+
+  .box-hero {
+    top: 245px;
+    right: 20px;
+    img {
+      width: 230px;
+    }
+  }
 }
 </style>

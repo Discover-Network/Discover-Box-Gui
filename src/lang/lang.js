@@ -315,7 +315,7 @@ export default {
     zh: "错误反馈",
   },
   Share_to_Earn: {
-    en: "Share_to_Earn",
+    en: "Share to Earn",
     zh: "分享赚取",
   },
   Connect_Wallet: {

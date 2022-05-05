@@ -41,6 +41,9 @@ export default {
       screenWidth: document.body.clientWidth,
     };
   },
+  mounted() {
+    console.log("width: ", document.body.clientWidth);
+  },
 };
 </script>
 
@@ -162,6 +165,63 @@ export default {
     font-size: 26px;
     color: #1de4ae;
     font-weight: bold;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .greek-gods-content {
+    padding: 0;
+    /deep/ .el-carousel__button {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /deep/ .el-carousel__indicators--horizontal {
+      bottom: -12px;
+    }
+  }
+
+  .greek-gods {
+    height: 420px;
+  }
+
+  .greek-god-card {
+    width: 302px !important;
+    height: 160px;
+    column-gap: 15px;
+    padding: 0 20px;
+  }
+
+  .greek-god-avatar {
+    border: 4px solid #fff;
+    height: 114px;
+    width: 121px;
+    border-radius: 14px;
+    margin-left: 24px;
+  }
+
+  .greek-god-avatar img {
+    width: 106px;
+  }
+
+  .greek-god-card-name {
+    font-size: 22px;
+    height: 16px;
+  }
+
+  .greek-god-card-type {
+    font-size: 12px;
+    height: 28px;
+    line-height: 28px;
+    margin-top: 10px;
+    img {
+      width: 28px;
+    }
+  }
+
+  .greek-god-card-desc {
+    font-size: 16px;
   }
 }
 </style>

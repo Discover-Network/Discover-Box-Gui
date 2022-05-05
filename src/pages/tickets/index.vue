@@ -757,6 +757,10 @@ export default {
     width: 96%;
   }
 
+  .card-title {
+    height: inherit;
+  }
+
   .tickets-title {
     font-size: 35px;
   }

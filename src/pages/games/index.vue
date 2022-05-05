@@ -1,26 +1,29 @@
 <template>
-  <div :class="['gamesWrapper']">
-    <div class="gamesHeader">
+  <div :class="['games-wrapper']">
+    <div class="header">
       <div class="games-logo" @click="goBack">
         <img src="@/assets/images/logo.png" alt="" />
       </div>
 
-      <div :class="['winNow', gamesStatus === '' ? '' : 'hideBack']">
+      <div :class="['win-now', gamesStatus === '' ? '' : 'hide-back']">
         <div v-if="gamesStatus === ''">
-          <div class="backBtn" @click="goBack">
+          <div class="back-btn" @click="goBack">
             <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
           </div>
         </div>
-        <div class="winTitle">{{ lg("win_now").toUpperCase() }} ！</div>
+        <div class="win-title">{{ lg("win_now").toUpperCase() }} ！</div>
       </div>
-      <div class="m-winTitle">{{ lg("win_now").toUpperCase() }}！</div>
+      <div class="m-win-title">{{ lg("win_now").toUpperCase() }}！</div>
     </div>
-    <div class="gamesContent">
-      <div class="godsContent" v-if="gamesStatus === ''">
+    <div class="games-content">
+      <div class="gods-content" v-if="gamesStatus === ''">
         <div class="gods">
-          <!--<div  class="godInfoItems"  @click="gamePlay(item, index)"-->
+          <!--<div  class="god-info-items"  @click="gamePlay(item, index)"-->
           <div
-            :class="['godInfoItems', godInfoRotate ? 'godInfoItemsRotate' : '']"
+            :class="[
+              'god-info-items',
+              godInfoRotate ? 'god-info-items-rotate' : '',
+            ]"
             @click="gamePlay(item, index)"
             v-for="(item, index) in gameGods"
             :key="index"
@@ -30,9 +33,9 @@
             <div
               :class="[
                 'godInfo',
-                godInfoRotate ? 'godInfoRotateBack' : '',
-                isSelectGod ? 'godInfoAni' : '',
-                isSelectGod && !godInfoRotate ? 'godInfoRotateFront' : '',
+                godInfoRotate ? 'god-info-rotate-back' : '',
+                isSelectGod ? 'god-info-ani' : '',
+                isSelectGod && !godInfoRotate ? 'god-info-rotate-front' : '',
               ]"
             >
               <card :data-image="item.url" :showAni="!godInfoRotate">
@@ -50,14 +53,16 @@
             <div
               :class="[
                 'godInfoBack',
-                godInfoRotate ? 'godInfoRotateFront' : 'godInfoRotateBack',
+                godInfoRotate
+                  ? 'god-info-rotate-front'
+                  : 'god-info-rotate-back',
               ]"
             >
               <span v-if="index === selectGodIndex" />
               <span v-if="index === selectGodIndex" />
               <span v-if="index === selectGodIndex" />
               <span v-if="index === selectGodIndex" />
-              <div class="godInfoBackContent">
+              <div class="god-info-back-content">
                 {{ cards_bonus[index] }} ARES
               </div>
             </div>
@@ -69,38 +74,42 @@
         <span />
         <span />
         <span />
-        <div class="godInformationTitle">
+        <div class="god-Information-title">
           <img :src="gods[godsIndex].typeImg" alt="" width="30" />
           {{ lg(gods[godsIndex].army) }}
         </div>
-        <div class="godInformationContent">
-          <div class="godInformationContentAvatar">
+        <div class="god-Information-content">
+          <div class="god-Information-content-avatar">
             <img :src="gods[godsIndex].url" alt="" width="200" />
           </div>
           <div>
-            <div class="godInformationName">{{ lg(gods[godsIndex].name) }}</div>
-            <div class="godInformationDesc">{{ lg(gods[godsIndex].desc) }}</div>
-            <div class="godInformationSlogan">
+            <div class="god-information-name">
+              {{ lg(gods[godsIndex].name) }}
+            </div>
+            <div class="god-information-desc">
+              {{ lg(gods[godsIndex].desc) }}
+            </div>
+            <div class="god-information-slogan">
               {{ lg(gods[godsIndex].slogan) }}
             </div>
           </div>
         </div>
-        <div class="godInformationBtn" @click="showGodWin">OK</div>
+        <div class="god-information-btn" @click="showGodWin">OK</div>
       </div>
 
       <div class="godWinCard" v-if="gamesStatus === 'godWin'">
-        <div class="godWinCardTitle">{{ lg(gods[godsIndex].name) }}</div>
-        <div class="godWinCardAvatar">
+        <div class="god-win-card-title">{{ lg(gods[godsIndex].name) }}</div>
+        <div class="god-win-card-avatar">
           <img :src="gods[godsIndex].url" alt="" width="150" />
         </div>
-        <div class="godWinCardDesc">
+        <div class="god-win-card-desc">
           {{ lg(gods[godsIndex].desc) }} helped you Get
         </div>
-        <div class="godWinCardAres">
+        <div class="god-win-card-ares">
           <img src="@/assets/images/coin.png" alt="" width="40" />
           {{ bonus }} DISC
         </div>
-        <div class="godWinCardBtn" @click="turnCard">OK</div>
+        <div class="god-win-card-btn" @click="turnCard">OK</div>
       </div>
 
       <div class="broadcast" v-show="broadcasts.length > 0 && broadcastShow">
@@ -137,7 +146,7 @@
           <p>{{ lg("out_play_time_p1") }}</p>
           <p>{{ lg("out_play_time_p2") }}</p>
         </div>
-        <div class="godInformationBtn" @click="goBack">{{ lg("ok") }}</div>
+        <div class="god-information-btn" @click="goBack">{{ lg("ok") }}</div>
       </div>
     </a-modal>
 
@@ -417,7 +426,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.gamesWrapper {
+.games-wrapper {
   width: 100%;
   min-height: 100vh;
   color: #fff;
@@ -427,17 +436,17 @@ export default {
   background-size: cover;
 }
 
-.gamesContent {
+.games-content {
   position: relative;
   display: flex;
   justify-content: center;
   padding: 0 50px;
 }
 
-.gamesHeader {
+.header {
 }
 
-.godsContent {
+.gods-content {
   //margin-left: 100px;
 }
 
@@ -478,7 +487,7 @@ export default {
   }
 }
 
-.winNow {
+.win-now {
   height: 153px;
   width: 655px;
   font-size: 30px;
@@ -493,21 +502,21 @@ export default {
   }
 }
 
-.hideBack {
+.hide-back {
   width: 200px;
   text-align: center;
-  .winTitle {
+  .win-title {
     width: 200px !important;
   }
 }
 
-.m-winTitle {
+.m-win-title {
   text-align: center;
   margin-top: -50px;
   display: none;
 }
 
-.backBtn {
+.back-btn {
   width: 65px !important;
   height: 51px;
   line-height: 51px;
@@ -571,7 +580,7 @@ export default {
   color: #0a133f;
 }
 
-.godInfoAni {
+.god-info-ani {
   width: 207px;
   height: 207px;
   border: 4px solid #ffffff;
@@ -621,7 +630,7 @@ export default {
   overflow: hidden;
 }
 
-//.godInfoItems {
+//.god-info-items {
 //  width: 183px;
 //  height: 180px;
 //  border-radius: 20px;
@@ -630,24 +639,24 @@ export default {
 //  overflow: hidden;
 //}
 
-.godInfoItems {
+.god-info-items {
   width: 183px;
   height: 180px;
   border-radius: 10px;
 }
-.godInfoItemsRotate {
+.god-info-items-rotate {
   perspective: 500px;
   position: relative;
   overflow: hidden;
 }
 
-.godInfoRotateBack {
+.god-info-rotate-back {
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
   opacity: 0;
 }
 
-.godInfoRotateFront {
+.god-info-rotate-front {
   transform: rotateY(0deg);
   -webkit-transform: rotateY(0deg);
 }
@@ -670,7 +679,7 @@ export default {
   overflow: hidden;
 }
 
-.godInfoBackContent {
+.god-info-back-content {
   background: url("../../../public/static/img/god_bcg.png");
   background-size: 100%;
   width: 80%;
@@ -691,7 +700,7 @@ export default {
   width: 100%;
 }
 
-.godInformationTitle {
+.god-Information-title {
   padding: 0 20px;
   text-align: right;
 }
@@ -780,22 +789,22 @@ export default {
   animation: animate 4s linear infinite;
 }
 
-.godInformationContent {
+.god-Information-content {
   display: flex;
   align-items: center;
   column-gap: 20px;
 }
 
-.godInformationContentAvatar {
+.god-Information-content-avatar {
   border: 4px solid #1de4ae;
   border-radius: 20px;
 }
 
-.godInformationName {
+.god-information-name {
   font-size: 40px;
 }
 
-.godInformationDesc {
+.god-information-desc {
   width: 282px;
   height: 40px;
   line-height: 40px;
@@ -805,7 +814,7 @@ export default {
   background: linear-gradient(84deg, #1de4ae 0%, rgba(0, 37, 172, 0) 100%);
 }
 
-.godInformationBtn {
+.god-information-btn {
   width: 144px;
   height: 53px;
   line-height: 53px;
@@ -821,7 +830,7 @@ export default {
   cursor: url("../../../public/static/img/staff48.ico"), default;
 }
 
-.godInformationSlogan {
+.god-information-slogan {
   margin-top: 20px;
   font-size: 14px;
   line-height: 18px;
@@ -848,29 +857,29 @@ export default {
   }
 }
 
-.godWinCardTitle {
+.god-win-card-title {
   font-size: 40px;
   font-weight: bold;
 }
 
-.godWinCardAvatar {
+.god-win-card-avatar {
   margin: 0 auto;
   margin-top: 20px;
 }
 
-.godWinCardAvatar img {
+.god-win-card-avatar img {
   width: 140px;
   border-radius: 50%;
   border: 8px solid #30407b;
 }
 
-.godWinCardDesc {
+.god-win-card-desc {
   font-size: 20px;
   font-weight: bold;
   margin-top: 20px;
 }
 
-.godWinCardAres {
+.god-win-card-ares {
   width: 274px;
   height: 55px;
   line-height: 55px;
@@ -882,7 +891,7 @@ export default {
   margin-top: 20px;
 }
 
-.godWinCardBtn {
+.god-win-card-btn {
   width: 144px;
   height: 53px;
   line-height: 53px;
@@ -984,12 +993,12 @@ export default {
     line-height: 45px;
   }
 
-  .gamesWrapper {
+  .games-wrapper {
     padding-bottom: 100px;
     background-size: 100% 50%;
   }
 
-  .winNow {
+  .win-now {
     width: 234px;
     height: 200px;
     margin-left: 36px;
@@ -997,28 +1006,28 @@ export default {
     font-size: 20px;
   }
 
-  .m-winTitle {
+  .m-win-title {
     display: block;
   }
 
-  .winTitle {
+  .win-title {
     display: none;
   }
 
-  .hideBack {
+  .hide-back {
     margin-left: 0;
     width: 376px;
   }
 
-  .backBtn {
+  .back-btn {
     position: absolute;
     left: 20px;
-    height: 30px;
+    height: 40px;
     top: 40px;
     line-height: 40px;
     font-size: 22px;
     padding-left: 0 !important;
-    width: 40px !important;
+    width: 50px !important;
   }
 
   .games-logo {
@@ -1032,26 +1041,26 @@ export default {
   .gods {
     margin-top: 88px;
     //transform: scale(0.6);
-    width: 373px;
+    width: 380px;
     column-gap: 11px;
     row-gap: 12px;
     padding: 20px 10px;
   }
 
-  .godInfoItems,
+  .god-info-items,
   .godInfo {
     width: 110px;
     height: 108px;
   }
 
-  .gamesContent {
+  .games-content {
     padding: 10px 20px;
   }
 
   .godInformation {
     width: 320px;
     padding: 25px 27px;
-    margin-top: 66px;
+    margin-top: 90px;
   }
 
   .godInformation span:nth-child(1) {
@@ -1070,14 +1079,14 @@ export default {
     height: 108px;
   }
 
-  .godInformationContentAvatar {
+  .god-Information-content-avatar {
     border-radius: 13px;
     img {
       width: 100px;
     }
   }
 
-  .godInformationTitle {
+  .god-Information-title {
     height: 18px;
     line-height: 18px;
     font-size: 12px;
@@ -1092,21 +1101,21 @@ export default {
     }
   }
 
-  .godInformationContent {
+  .god-Information-content {
     align-items: flex-start;
   }
 
-  .godInformationName {
+  .god-information-name {
     margin-top: 23px;
     font-size: 16px;
   }
 
-  .godInformationDesc {
+  .god-information-desc {
     font-size: 11px;
     width: 100px;
   }
 
-  .godInformationSlogan {
+  .god-information-slogan {
     padding: 0 20px;
     position: absolute;
     top: 160px;
@@ -1115,7 +1124,7 @@ export default {
     left: 0;
   }
 
-  .godInformationBtn {
+  .god-information-btn {
     margin-top: 196px;
     height: 31px;
     line-height: 34px;
@@ -1129,11 +1138,11 @@ export default {
     margin-top: 88px;
   }
 
-  .godWinCardTitle {
+  .god-win-card-title {
     font-size: 20px;
   }
 
-  .godWinCardAvatar {
+  .god-win-card-avatar {
     width: 106px;
     height: 106px;
     img {
@@ -1141,11 +1150,11 @@ export default {
     }
   }
 
-  .godWinCardDesc {
+  .god-win-card-desc {
     font-size: 16px;
   }
 
-  .godWinCardAres {
+  .god-win-card-ares {
     height: 39px;
     width: 162px;
     line-height: 39px;
@@ -1156,7 +1165,7 @@ export default {
     }
   }
 
-  .godWinCardBtn {
+  .god-win-card-btn {
     width: 81px;
     height: 30px;
     line-height: 34px;

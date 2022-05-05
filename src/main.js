@@ -7,8 +7,20 @@ import {
   FileImageOutlined,
   UploadOutlined,
   TwitterOutlined,
+  UserOutlined,
+  LockFilled,
 } from "@ant-design/icons-vue";
-import { Badge, Table, Modal, Input, Upload, Spin } from "ant-design-vue";
+import {
+  Badge,
+  Table,
+  Modal,
+  Input,
+  Upload,
+  Spin,
+  Form,
+  Button,
+  Select,
+} from "ant-design-vue";
 import { ElCarousel, ElCarouselItem } from "element-plus";
 import "element-plus/dist/index.css";
 
@@ -46,7 +58,18 @@ window.web_lang = web_lang;
   app.component("FileImageOutlined", FileImageOutlined);
   app.component("UploadOutlined", UploadOutlined);
   app.component("TwitterOutlined", TwitterOutlined);
-  app.use(Badge).use(Table).use(Modal).use(Input).use(Upload).use(Spin);
+  app.component("UserOutlined", UserOutlined);
+  app.component("LockFilled", LockFilled);
+  app
+    .use(Badge)
+    .use(Table)
+    .use(Modal)
+    .use(Input)
+    .use(Upload)
+    .use(Spin)
+    .use(Form)
+    .use(Button)
+    .use(Select);
   app.use(ElCarousel).use(ElCarouselItem);
   app.use(router);
   app.mount("#app");

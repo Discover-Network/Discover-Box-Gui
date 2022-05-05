@@ -106,4 +106,17 @@ export default {
   line-height: 26px;
   font-weight: 600;
 }
+
+@media screen and (max-width: 750px) {
+  .to-play {
+    padding: 0 20px;
+  }
+
+  .to-play-steps {
+    flex-direction: column;
+    align-items: center;
+    row-gap: 20px;
+    padding-bottom: 30px;
+  }
+}
 </style>
