@@ -108,8 +108,11 @@
 import { hideMiddleStr } from "@/utils/format";
 import { gods } from "@/utils/contant";
 import { methodType, request } from "@/utils/request";
+import data_main_list from "@/data/main_list";
+const tokenLockAbi = require("@/data/token_locked.abi.json");
 import apis from "@/utils/apis";
 import { appStore } from "@/store";
+import Decimal from "decimal.js";
 
 export default {
   name: "LeaderBoard",
@@ -141,7 +144,14 @@ export default {
           align: "center",
         },
       ],
+      gamePermissions: false,
     };
+  },
+  computed: {
+    token_data() {
+      let temp = data_main_list[0];
+      return JSON.parse(JSON.stringify(temp));
+    },
   },
   mounted() {
     const store = appStore();
@@ -153,6 +163,7 @@ export default {
     if (store.accessToken !== "") {
       this.getLeaderboard(1);
     }
+    this.getStaked();
   },
   methods: {
     hideMiddleStr,
@@ -182,6 +193,35 @@ export default {
     playBtnSound() {
       let sound = document.querySelector("#mouseSound");
       sound.play();
+    },
+    async getStaked() {
+      let v = this;
+      const local_address = await v.action.getAddress();
+      const reward_address = v.token_data.locked_address;
+      const decimals = v.token_data.reward_decimals;
+      let contract = new v.myWeb3.eth.Contract(tokenLockAbi, reward_address);
+      contract.methods.balanceOf(local_address).call(function (error, result) {
+        let balance = new Decimal(result).div(Math.pow(10, decimals)).toFixed();
+        if (balance > 0) {
+          contract.methods
+            .usersStaked(local_address)
+            .call(function (error, result) {
+              console.log("stake time", result);
+              const now = parseInt(new Date().getTime() / 1000);
+              if (now < result.endTime) {
+                v.gamePermissions = true;
+              }
+            });
+        }
+      });
+    },
+    async toWin() {
+      this.playBtnSound();
+      if (this.gamePermissions) {
+        this.$router.push("/win");
+      } else {
+        this.$router.push("/tickets");
+      }
     },
   },
 };

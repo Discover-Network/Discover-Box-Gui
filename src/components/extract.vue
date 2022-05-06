@@ -146,6 +146,9 @@
 import { MediaChannel, ShareType } from "@/utils/contant";
 import { appConfigStore } from "@/store/config";
 import { withdrawMessage } from "@/utils/sign_message";
+import data_main_list from "@/data/main_list.js";
+import boxAbi from "@/data/discover_box.abi.json";
+import Decimal from "decimal.js";
 export default {
   name: "BoxExtract",
   props: {
@@ -160,6 +163,12 @@ export default {
     },
     nickName: {
       type: String,
+    },
+  },
+  computed: {
+    token_data() {
+      let temp = data_main_list[0];
+      return JSON.parse(JSON.stringify(temp));
     },
   },
   setup() {
@@ -194,7 +203,7 @@ export default {
     setExtractMax() {
       this.extractNum = this.maxGameBalance;
     },
-    widthDraw() {
+    widthDraw1() {
       if (this.extractNum < this.minWithdraw) {
         this.rewardsLess = !this.rewardsLess;
         return;
@@ -250,6 +259,53 @@ export default {
             });
         });
       });
+    },
+    async widthDraw() {
+      if (this.extractNum < this.minWithdraw) {
+        this.rewardsLess = !this.rewardsLess;
+        return;
+      }
+
+      const local_address = await this.action.getAddress();
+      const trc20_address = this.token_data.discover_box_address;
+      const contract = new this.myWeb3.eth.Contract(boxAbi, trc20_address);
+      const amount = new Decimal(20)
+        .mul(new Decimal(10).pow(this.token_data.token_decimals))
+        .toString();
+
+      const claimData = contract.methods.claim(amount).encodeABI();
+
+      const res = await this.myWeb3.eth
+        .sendTransaction({
+          from: local_address,
+          to: trc20_address,
+          value: 0,
+          data: claimData,
+        })
+        .on("transactionHash", function (hash) {
+          console.log(`hash: ` + hash);
+        })
+        .on("receipt", function (receipt) {
+          this.loading = false;
+          console.log("receipt", receipt);
+          console.log("receipt", receipt.logs);
+        })
+        .on("error", function (receipt) {
+          this.loading = false;
+          console.log("error", receipt);
+        })
+        .catch((err) => {
+          console.log("err", err);
+          if (
+            err.message.includes(
+              "VM Exception while processing transaction: execution revert Less Then Minimum Claim Amount"
+            )
+          ) {
+            this.rewardsLess = !this.rewardsLess;
+          }
+        });
+
+      console.log("res", res);
     },
     extractCancel() {
       this.$emit("update:extractShow", false);

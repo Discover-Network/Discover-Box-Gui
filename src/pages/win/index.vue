@@ -434,7 +434,7 @@ export default {
     }, 1000 * 60);
     this.addBtnSound();
   },
-  beforeUnmount() {
+  unmounted() {
     if (this.countDownInterval) {
       clearInterval(this.countDownInterval);
     }

@@ -3,11 +3,14 @@ export default {
   // 读取MetaMask，更新账号等
   async scanMetaMaskAccount() {
     //以太坊web3
-    if (window.ethereum.chainId !== "0x3" || window.ethereum.chainId !== "3") {
+    if (
+      window.ethereum.chainId !== "0x253" ||
+      window.ethereum.chainId !== "595"
+    ) {
       try {
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x3" }],
+          params: [{ chainId: "0x253" }],
         });
       } catch (switchError) {
         if (switchError.code === 4902) {

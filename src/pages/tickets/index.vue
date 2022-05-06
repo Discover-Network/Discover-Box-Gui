@@ -30,7 +30,7 @@
         <div class="card-input-group" v-if="stakeBalance <= 0">
           <div>{{ lg("stake_token") }}</div>
           <a-input
-            :value="minBalance + ' ARES'"
+            :value="minBalance + ' DISV'"
             class="card-input"
             :disabled="true"
           />
@@ -39,7 +39,7 @@
           <div>{{ lg("stake_tokens") }}</div>
           <div>
             <img src="@/assets/images/bag.png" alt="coin" width="42" />&nbsp;
-            <span>{{ stakeBalance }}</span> ARES
+            <span>{{ stakeBalance }}</span> DISV
           </div>
         </div>
         <div class="stake-step">
@@ -113,7 +113,7 @@
         </div>
         <div class="modalBtns">
           <div class="modalBtn bottom-btn mouseClick" @click="toUniswap">
-            {{ lg("buy") }} ARES
+            {{ lg("buy") }} DISV
           </div>
           <div class="modalBtn bottom-btn mouseClick" @click="cancel()">
             {{ lg("cancel") }}
@@ -177,7 +177,7 @@
 <script>
 import data_main_list from "@/data/main_list.js";
 const tokenAbi = require("@/data/token_abi.json");
-const trojanAbi = require("@/data/trojan_abi.json");
+const tokenLockAbi = require("@/data/token_locked.abi.json");
 import Decimal from "decimal.js";
 import { appConfigStore } from "@/store/config";
 import { storeToRefs } from "pinia/dist/pinia";
@@ -256,7 +256,7 @@ export default {
         v.token_data.token_address
       );
       contract.methods
-        .allowance(local_address, v.token_data.trojan_reward_address)
+        .allowance(local_address, v.token_data.locked_address)
         .call(function (error, result) {
           console.log("check approving", result);
 
@@ -274,7 +274,7 @@ export default {
     },
     async approve() {
       let v = this;
-      const reward_address = v.token_data.trojan_reward_address;
+      const reward_address = v.token_data.locked_address;
       const token_address = v.token_data.token_address;
       const local_address = await v.action.getAddress();
 
@@ -285,7 +285,7 @@ export default {
         .approve(reward_address, "10000000000000000000000000")
         .encodeABI();
       console.log("approvedata", approveData);
-      v.myWeb3.eth
+      await v.myWeb3.eth
         .sendTransaction({
           from: local_address,
           to: token_address,
@@ -295,7 +295,6 @@ export default {
         .on("transactionHash", function (hash) {
           //hash
           console.log(`hash: ` + hash);
-          v.loading = false;
           v.timer = setInterval(v.checkApprove, 1000);
           //server order
         })
@@ -309,6 +308,7 @@ export default {
           console.log(receipt);
           v.loading = false;
         });
+      v.loading = false;
     },
     async stake() {
       let v = this;
@@ -320,16 +320,16 @@ export default {
       }
 
       // let num = v.input_num_stake;
-      let num = this.miniBalance;
-      const reward_address = v.token_data.trojan_reward_address;
+      let num = v.minBalance;
+      const reward_address = v.token_data.locked_address;
       const local_address = await v.action.getAddress();
       console.log("local_address", local_address);
       console.log("reward_address", reward_address);
       v.loading = true;
-      if (v.token_data.id === "Ares") {
+      if (v.token_data.id === "Disv") {
         //调用合约执行
         let reward_contract = new v.myWeb3.eth.Contract(
-          trojanAbi,
+          tokenLockAbi,
           reward_address
         );
         let stakeNum = new Decimal(num)
@@ -368,9 +368,9 @@ export default {
     async getStaked() {
       let v = this;
       const local_address = await v.action.getAddress();
-      const reward_address = v.token_data.trojan_reward_address;
+      const reward_address = v.token_data.locked_address;
       const decimals = v.token_data.reward_decimals;
-      let contract = new v.myWeb3.eth.Contract(trojanAbi, reward_address);
+      let contract = new v.myWeb3.eth.Contract(tokenLockAbi, reward_address);
 
       contract.methods.balanceOf(local_address).call(function (error, result) {
         let balance = new Decimal(result).div(Math.pow(10, decimals)).toFixed();
@@ -412,8 +412,8 @@ export default {
 
       this.loading = true;
       const local_address = await v.action.getAddress();
-      const reward_address = v.token_data.trojan_reward_address;
-      let contract = new v.myWeb3.eth.Contract(trojanAbi, reward_address);
+      const reward_address = v.token_data.locked_address;
+      let contract = new v.myWeb3.eth.Contract(tokenLockAbi, reward_address);
       const renewData = contract.methods.renew().encodeABI();
 
       const rewardReceipt = await v.myWeb3.eth.sendTransaction(
@@ -445,11 +445,11 @@ export default {
       }
 
       let num = this.stakeBalance;
-      const reward_address = v.token_data.trojan_reward_address;
+      const reward_address = v.token_data.locked_address;
       const local_address = await v.action.getAddress();
       v.loading = true;
       let reward_contract = new v.myWeb3.eth.Contract(
-        trojanAbi,
+        tokenLockAbi,
         reward_address
       );
       let stakeNum = new Decimal(num)

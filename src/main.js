@@ -31,19 +31,19 @@ import langMethods from "./lang/index.js";
 import action from "@/action";
 import Web3 from "web3";
 
-//多语言处理
+//language
 window.lang = "en";
 window.web_lang = web_lang;
 
 (async () => {
   const app = createApp(App);
-  //以太坊web3
+  //web3
   if (window.ethereum) {
     const chainId = await window.ethereum.request({
       method: "eth_chainId",
     });
 
-    if (chainId === "0x3") {
+    if (chainId === "0x253") {
       app.config.globalProperties.myWeb3 = await new Web3(window.ethereum);
     }
   }

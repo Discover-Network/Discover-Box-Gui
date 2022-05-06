@@ -179,8 +179,8 @@
 
     <audio id="coinSound" src="/static/sound/rotation-sound.mp3" />
 
-    <div class="footer">
-      Copyright © 2021. Ares Protocol All rights reserved.
+    <div class="loading" v-show="loading">
+      <img src="/static/img//loading.gif" alt="" />
     </div>
   </div>
 </template>
@@ -192,6 +192,8 @@ import { appStore as AppStore } from "@/store";
 import { playGameMessage } from "@/utils/sign_message";
 import { methodType, request } from "@/utils/request";
 import apis from "@/utils/apis";
+import boxAbi from "@/data/discover_box.abi.json";
+import data_main_list from "@/data/main_list.js";
 
 export default {
   name: "BoxGames",
@@ -219,7 +221,14 @@ export default {
       isPlay: false,
       showPlayed: false,
       showPlayedType: "played", // "outTime"
+      loading: false,
     };
+  },
+  computed: {
+    token_data() {
+      let temp = data_main_list[0];
+      return JSON.parse(JSON.stringify(temp));
+    },
   },
   setup() {
     const appStore = AppStore();
@@ -228,8 +237,6 @@ export default {
     };
   },
   created() {
-    // this.gamePlay();
-    // this.getGameInfo(2022020811);
     this.getBroadcast();
     if (!this.appStore.accessToken) {
       window.location.href = "/";
@@ -301,7 +308,7 @@ export default {
       //   this.showCoinSvg = false;
       // }, 1000 * 7);
     },
-    async gamePlay(item, index) {
+    async gamePlay1(item, index) {
       if (this.godInfoRotate) {
         return;
       }
@@ -362,6 +369,181 @@ export default {
             });
         }
       );
+    },
+    async gamePlay(item, index) {
+      if (this.godInfoRotate) {
+        return;
+      }
+
+      const logData1 =
+        "0x000000000000000000000000000000000000000000000005ad559ec9ae8ff41e0000000000000000000000000000000000000000000000000000000062749ff20000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000009000000000000000000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000009000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000500000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000900000000000000000000000000000000000000000000003356aaad3bab8c7297000000000000000000000000000000000000000000000005ad559ec9ae8ff41e00000000000000000000000000000000000000000000002a8c9bcab76fbfcdf600000000000000000000000000000000000000000000009f226e409d9f4de70a00000000000000000000000000000000000000000000000b183a708e4c22dd5200000000000000000000000000000000000000000000001ce452377d744d4f51000000000000000000000000000000000000000000000011df6aaba08ce4e3e50000000000000000000000000000000000000000000000005069fa2ac36914db00000000000000000000000000000000000000000000000309b0741cfd144db0";
+      const resLog1 = this.myWeb3.eth.abi.decodeLog(
+        [
+          {
+            indexed: true,
+            internalType: "address",
+            name: "user",
+            type: "address",
+          },
+          {
+            indexed: false,
+            internalType: "uint256",
+            name: "bonus",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            internalType: "uint256",
+            name: "time",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            internalType: "uint256",
+            name: "chosenIndex",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            internalType: "uint256",
+            name: "bonusLevel",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            internalType: "uint256[]",
+            name: "cards",
+            type: "uint256[]",
+          },
+          {
+            indexed: false,
+            internalType: "uint256[]",
+            name: "cardsBonus",
+            type: "uint256[]",
+          },
+        ],
+        logData1,
+        [
+          "0xcece514754beb6c74cf92f5940d98e72b3603753972c1641b5b4c2e01174ce59",
+          "0x0000000000000000000000009866c5db69592ade1f1179d5110fdc7be46f6f25",
+        ]
+      );
+      console.log("resLog1", resLog1);
+
+      if (logData) {
+        return;
+      }
+
+      this.loading = true;
+      const cardsIndex = [];
+      this.gameGods.forEach((item) => {
+        cardsIndex.push(item.index + 1);
+      });
+      this.selectGodIndex = index;
+      this.godsIndex = item.index;
+      this.setSelectGod = true;
+
+      const local_address = await this.action.getAddress();
+      const trc20_address = this.token_data.discover_box_address;
+      let contract = new this.myWeb3.eth.Contract(boxAbi, trc20_address);
+
+      // this.myWeb3.eth.getTransactionReceipt("0x4ce4705213be6e5d7c736e13291cf0056a60b923f865f77a284a1cc294978236").then((result) => {
+      //   console.log("aaaaaaaaa", result);
+      //   let processReceipt = contract.events.PlayedGame.processReceipt(result);
+      //   console.log("processReceipt", processReceipt);
+      // })
+
+      // let cards = "[";
+      // cardsIndex.forEach((item) => {
+      //   cards += item + " ";
+      // });
+      // cards = cards.trim() + "]";
+      console.log("data", cardsIndex);
+      console.log("data", local_address);
+      console.log("data", trc20_address);
+
+      const gameData = contract.methods.playGame(index, cardsIndex).encodeABI();
+
+      const res = await this.myWeb3.eth
+        .sendTransaction({
+          from: local_address,
+          to: trc20_address,
+          value: 0,
+          data: gameData,
+        })
+        .on("transactionHash", function (hash) {
+          console.log(`hash: ` + hash);
+        })
+        .on("receipt", function (receipt) {
+          this.loading = false;
+          console.log("receipt", receipt);
+          console.log("receipt log", receipt.logs);
+        })
+        .on("error", function (receipt) {
+          this.loading = false;
+          console.log("error", receipt);
+        })
+        .catch((err) => {
+          if (
+            err.message.includes("execution revert Per Hour Only Allow Once")
+          ) {
+            this.showPlayed = true;
+            this.loading = false;
+            this.showPlayedType = "outTime";
+          }
+        });
+      console.log("res", res);
+      const logData = res.logs[0].data;
+      const resLog = this.myWeb3.eth.abi.decodeLog(
+        [
+          {
+            indexed: true,
+            internalType: "address",
+            name: "user",
+            type: "address",
+          },
+          {
+            indexed: false,
+            internalType: "uint256",
+            name: "bonus",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            internalType: "uint256",
+            name: "time",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            internalType: "uint256",
+            name: "chosenIndex",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            internalType: "uint256",
+            name: "bonusLevel",
+            type: "uint256",
+          },
+          {
+            indexed: false,
+            internalType: "uint256[]",
+            name: "cards",
+            type: "uint256[]",
+          },
+          {
+            indexed: false,
+            internalType: "uint256[]",
+            name: "cardsBonus",
+            type: "uint256[]",
+          },
+        ],
+        logData,
+        res.logs[0].topics
+      );
+      console.log("resLog", resLog);
+      this.loading = false;
     },
     getGameInfo(session) {
       return request(apis.game + session, methodType.GET).then((result) => {
@@ -959,6 +1141,23 @@ export default {
   text-align: center;
   font-size: 25px;
   color: #fff;
+}
+
+.loading {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  opacity: 0.3;
+
+  img {
+    margin-top: 300px;
+  }
 }
 
 @media screen and (max-width: 1250px) {

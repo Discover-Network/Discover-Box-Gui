@@ -18,7 +18,7 @@
           <div class="account-content">
             <div class="extract">
               <div>{{ lg("My_Rewards_Account") }}</div>
-              <div class="ares">{{ gameAccountBalance }} DISC</div>
+              <div class="ares">{{ gameAccountBalance }} DISV</div>
               <div class="ex-btn mouse-click" @click="showExtract">
                 {{ lg("Extract") }}
               </div>
@@ -28,7 +28,7 @@
               <div>
                 <img src="@/assets/images/bag.png" alt="/" />
               </div>
-              <div class="ares">{{ walletBalance }} DISC</div>
+              <div class="ares">{{ walletBalance }} DISV</div>
             </div>
           </div>
         </div>
@@ -75,7 +75,7 @@
         <div class="balance" @click="toWin">
           <div class="balance-btn">
             <img src="@/assets/images/coin.png" alt="coin" height="50" />&nbsp;
-            <span>{{ this.prize }} </span> <span>DISC</span>
+            <span>{{ this.prize }} </span> <span>DISV</span>
           </div>
           <div class="price">{{ lg("in_prize") }}!</div>
         </div>
@@ -143,7 +143,7 @@ import apis from "@/utils/apis.js";
 import { methodType, request } from "@/utils/request";
 import data_main_list from "@/data/main_list";
 import tokenAbi from "@/data/token_abi.json";
-import trojanAbi from "@/data/trojan_abi.json";
+const tokenLockAbi = require("@/data/token_locked.abi.json");
 import { appStore as AppStore } from "@/store";
 import { appConfigStore } from "@/store/config";
 import Decimal from "decimal.js";
@@ -167,7 +167,7 @@ export default {
       modalShow: false,
       extractShow: false,
       showShareEarn: false,
-      nickName: "haha",
+      nickName: "box",
     };
   },
   setup() {
@@ -218,15 +218,15 @@ export default {
           let balance = new Decimal(result)
             .div(Math.pow(10, decimals))
             .toFixed(3);
-          v.num_balance = balance;
+          v.walletBalance = balance;
         });
     },
     async getStaked() {
       let v = this;
       const local_address = await v.action.getAddress();
-      const reward_address = v.token_data.trojan_reward_address;
+      const reward_address = v.token_data.locked_address;
       const decimals = v.token_data.reward_decimals;
-      let contract = new v.myWeb3.eth.Contract(trojanAbi, reward_address);
+      let contract = new v.myWeb3.eth.Contract(tokenLockAbi, reward_address);
       contract.methods.balanceOf(local_address).call(function (error, result) {
         let balance = new Decimal(result).div(Math.pow(10, decimals)).toFixed();
         if (balance > 0) {
@@ -253,7 +253,7 @@ export default {
     },
     async toWin() {
       this.playBtnSound();
-      if (!this.gamePermissions) {
+      if (this.gamePermissions) {
         this.$router.push("/win");
       } else {
         this.modalShow = true;
